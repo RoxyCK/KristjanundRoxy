@@ -2,10 +2,11 @@
 # https://google-images-download.readthedocs.io/en/latest/arguments.html
 # https://www.geeksforgeeks.org/how-to-download-google-images-using-python/
 
-from google_images_download import google_images_download 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
+from google_images_download import google_images_download 
 import yaml
+from random import shuffle
 
 def save(file_name, yaml_data):
     with open(file_name, 'w') as yaml_file:
@@ -32,16 +33,16 @@ titles = killers[0].findAll('th')
 titles = [title.text.strip() for title in titles]
 
 killer_data = []
-for i, killer in enumerate(killers[1:]):
+for killer in killers[1:]:
     specs = killer.findAll('td')
-    specs = [spec.text.strip() for spec in specs]
+    specs = [spec.text.strip().split('[')[0] for spec in specs]
     killer_dict = dict(zip(titles, specs))
     killer_data.append(killer_dict)
     #print(killer)
     #print(specs)
     #print(killer_dict)
 
-file_name = 'serial_killers.yaml'
+#file_name = 'serial_killers.yaml'
 #save(file_name, killer_data)
 #killer_data = load(file_name)
 
@@ -56,16 +57,21 @@ parameter:
     image_directory: default is the keyword
 """
 
-for killer in killer_data[:2]:
+shuffle(killer_data)
+for killer in killer_data[:10]:
     
     print(killer)
-    response = google_images_download.googleimagesdownload()
-    query = {'keywords': killer['Name'],
+    
+    q = 'killer ' + killer['Name'] # google query
+    query = {'keywords': q,
              'format': 'jpg',
              'limit': 10,
              'print_urls': False,
              'size': 'large',
-             'aspect_ratio': 'square'}
+             'aspect_ratio': 'square',
+             'output_directory': 'serial_killers',
+             'image_directory': killer['Name']}    
+    response = google_images_download.googleimagesdownload()
     response.download(query) 
 
 
