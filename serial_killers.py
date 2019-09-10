@@ -1,20 +1,22 @@
 """
-*
 * author: dick und doof und dick
 *
-* pip install google_images_download
-* https://google-images-download.readthedocs.io/en/latest/arguments.html
-* https://www.geeksforgeeks.org/how-to-download-google-images-using-python/
-* 
+*
 """
+
+# pip install google_images_download
+# https://google-images-download.readthedocs.io/en/latest/arguments.html
+# https://www.geeksforgeeks.org/how-to-download-google-images-using-python/
 
 import requests
 from bs4 import BeautifulSoup
 from google_images_download import google_images_download 
 from random import shuffle
-    
+from data_manager import YamlManager
+
 url = 'https://de.wikipedia.org/wiki/Liste_von_Serienm%C3%B6rdern'
 image_folder = 'serial_killers'
+yaml_file = 'serial_killers.yml'
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0'}
 source  = requests.get(url).text
@@ -40,6 +42,8 @@ for killer in killers[1:]:
     #print(killer)
     #print(specs)
     print(killer_dict)
+
+YamlManager.save(yaml_file, killer_data)
 
 error_killers = []
 
@@ -76,4 +80,5 @@ for killer in killer_data[:10]:
 
 [print('\n\n=> Error:', error_killer) for error_killer in error_killers]
     
+
 
